@@ -1,0 +1,66 @@
+---
+title: "Flight Delay"
+output: word_document
+---
+The data set provided contains flight details for 5,819,811 flights for the different months of 2014. The features include categorical variables such as Month, Carrier, Origin Airport Id and Destination Airport Id. Ther are ordinal variables such as Day of month, Day of week and cancelled. There also are numeric variables such as Departure delay, carrier delay, weather delay and distance.
+
+```{r}
+require(dplyr)
+require(gbm)
+load(file="2014flights.Rdata")
+```
+
+# Feature Engineering
+
+We wish to build a model that would predict the delay time of a flight. Hence, we need remove all the cancelled flights as there cannot be any record of a delay linked to those flights. The carrier delay and weather delay have missing values for most of the observations so it s better to drop those features. Our response is the arrival delay as that would be the final delay for the flight. The arrival delay has a few missing values. There could be two possibilities for this. The first being that there was no delay and hence these were left blank, or the delay was not recored at all. The second case seems to be more likely as the flights that had no delay had a value of 0 and the flights that do not have the arrival delay recorded are also mssing the actual elapsed time and the air time. Hence I removed these observations as imputing zeroes here may have resulted in a weaker model. 
+```{r}
+df <- df %>% filter(CANCELLED==0)
+#df<-df[,-c(4,6,8,11,12,13,20,24,25,26,27,28,29)]
+df<-df[,-c(4,6,8,9,1,12,13,15,16,20,24,28,29)]
+df<-na.omit(df)
+format(object.size(df),units='MiB')
+Y<- df$ARR_DELAY
+X<- df[-13]
+```
+
+# Training and Test set
+
+I split the data into training and testing set for the purpose of getting the estimate of the risk. I split the data randomly in the ration of 70:30.
+
+```{r}
+smp_size <- floor(0.7 * nrow(df))
+
+set.seed(123)
+train_ind <- sample(seq_len(nrow(df)), size = smp_size)
+
+X_train <- X[train_ind, ]
+X_test <- X[-train_ind, ]
+
+Y_train <- Y[train_ind]
+Y_test <- Y[-train_ind]
+```
+
+# Modelling 
+
+I chose the boosting method to generate a predictive model for the follwing reasons.
+1] The model can handle more categories than any other modelling technique.
+2] I can control the number of iterations easily.
+3] The learning rate can be changed to create a model that learns slowly
+4] It is easier to utilize all 8 cores of the machine to process in parallel.
+
+An ideal model would be one which would learn slowly over a long perod of time. In other words, a model which has a very low learning rate and a very high number of iterations. This is not possible as we are limited by the computing power available.
+
+# Model 1
+I started of with a very basic model. This model performs only 10 iterations with a very high learning rate of 1. I used the gaussian distribution in order to get the mean squared error. The model performs a 3 fold cross validation and utilizes all 8 cores of the machine.
+
+At the end of 10 iterations, the model has a training error of 152.023 which is very high but considering the small amount of iterations, is not very surprising. The model provides the departure delay as the most influential feature. It is highly correlated with the arrival delay, which makes sense as the late a flight leaves its place of origin, the more the chances are that it will arrive late at its destination. The other influential variables are the distance, actual time elapsed, carrier and the destination. These are the features that influence the delay time of a flight. The model performs only as well on the test set as it did on the training set with a risk estimate of 152.023
+
+# Model 2
+The second model I generated performed 300 iterations with a learning rate of 0.5. As expected, the model learns slower than the previous one but the higher number of iterations succesfully form a better model than before.
+
+The training error for this model is 144.9521. The most influential feature is the departure delay once again. The other influencial feature include origin, destination, carrier and month. This model performs better on the test set as well with a estimated risk of 145.8233
+
+# Model 3
+This model is close to the kind of model we would look for through the boosting process. It performs 1000 iterations and learns extremely slow with a learning rate of only 0.01
+
+The training error for this model is .The most influential feature is the departure delay. Other important features include. The estimated risk via this model is .

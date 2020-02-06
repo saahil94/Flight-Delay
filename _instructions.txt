@@ -1,0 +1,58 @@
+-----------------------------------------------------------------
+|         Analyzing Airline Flight Delays     | 
+-----------------------------------------------------------------
+
+For this assignment, you can use whatever software you prefer.  However, this exam has been written
+to be addressed with the split-apply-combine philosophy in general and dplyr in particular (Pandas
+is the standard analogue in Python, though Pandas has been written to mimic R’s framework).
+
+For this exam, we will be analyzing airline flight delays.  The first step in the exam will be downloading the
+flight data from the Bureau of Transportation Statistics:
+
+https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236&DB_Short_Name=On-Time
+
+See the code “getFlightData.R” for instructions on how to download and convert the data to an R object.
+
+We went over in class some basic functions behind dplyr (coreCommandsStudents.R) that can get you started.  Note that 
+data we looked at in that code is NOT the data for the exam.
+Warm-up questions (choose at least 3):
+* How many total flights are there in the data set?* How many flights were there for each day of the week?* Which month has the greatest proportion of late flights? Formally test 
+  the question: is there any difference in the true proportion of late flights across months?* Which day is best for minimizing average departure delays? 
+* Which departure and arrival airport combination is associated with the worst median delay?Main submission:Train a predictive model for how delayed a flight will be.  What are the 3 most important features you’ve found and by what criteria? What is the cross-validation estimate of the risk for your procedure? What is the training error estimate of the risk?Note that this doesn’t have to be “complicated” in the sense that a well done basic approach is preferable to a 
+partially completed complicated approach.
+
+
+You should return to me the following two, separate items:
+    - A write-up entitled firstnameLastname_warmup.pdf that contains your answers to the five warm-up questions.     
+      Just state the questions and your answers in a very brief yet readable format.
+
+
+    - A write-up entitled firstnameLastname_main.pdf that describes your predictive model. 
+      Some things that need to be obviously and explicitly included:
+          * 3 most important features you found and how you judged importance
+          * training error of your procedure
+          * cross-validation error of your procedure
+          * A description of your chosen procedure including why you chose it.
+      
+
+General rules for both submissions:
+* Don’t worry about making your submission look like an “essay”.  Use whatever format you feel is appropriate,
+  just make it easily readable
+* Either (use Rmarkdown) or (use a different document preparation system (exporting to pdf) 
+  and include the code you use as an appendix)
+  (in either case, don’t include your entire code. Only include the code necessary for answering the questions. Note this means 
+   there will probably be a substantial difference between the code you write during the exam and the code
+   that you end up submitting.  To this end, I recommend simultaneously developing two scripts, one that includes
+   all of your explorations and the other containing only the “final version”).  
+*  Do not include any superfluous output or discussions.  Only include output and code that directly addresses 
+   the stated goal(s) for the submission.  
+
+Evaluation: Your grade on this exam will be based on the following:
+
+- Warm-up [30 points]. 
+- Main    [70 points]. 
+
+If you include any code written by anyone but you (other than from the book, lecture notes, homeworks, or
+packages) either exactly or substantially similar, be sure to provide proper attribution, including a 
+URL, text, author, etc. or other available information. It is fine to do so, but make sure (for your sake)
+you have a very clear understanding of what the code is doing and that you cite your source.  

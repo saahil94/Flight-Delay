@@ -1,0 +1,52 @@
+---
+title: "SaahilDeshpande_warmup"
+author: "Saahil Deshpande"
+date: "November 18, 2017"
+output: word_document
+---
+
+# Question 1
+How many total flights are there in the data set?
+```{r}
+require(ggplot2)
+require(dplyr)
+load(file="2014flights.Rdata")
+format(object.size(df),units='MiB')#get the size in memory
+summarise(df,count = n())
+```
+There are a total of 5819811 flights in the data set
+
+# Question 2
+How many flights were there for each day of the week?
+```{r}
+by_DOW<- df %>% group_by(DAY_OF_WEEK) %>% summarise(count = n())
+by_DOW
+```
+The week begins from Monday, hence 1 corresponds to a Monday, and ends on a Sunday, hence 7 corresponds to a Sunday.
+
+# Question 3
+Which month has the greatest proportion of late flights? Formally test the question: is there any difference in the true proportion of late flights across months?
+```{r}
+by_mon<- df %>% filter(CANCELLED==0,!is.na(ARR_DELAY))
+by_mon<- by_mon %>% group_by(MONTH) %>% summarise(count = n(), delayed = length(which(ARR_DELAY>0)), proportion=length(which(ARR_DELAY>0))/n())
+by_mon
+```
+ June, that is the 6th month seems to have the maximum number of delayed flights with 230496 late flights. July has the next maximum nuber of delayed flights but they are nearly 10000 flights lesser than june. But this data could be misleading as we are not considering the total number of flights that actually did travel every month. If we check the proportion of flights that were late every month, we can see that even though june still have the maximum proportion of late flights, the other months have nearly the same proportion. Based on this data it wouldn't be appropriate to say that there exists a difference in the true proportion of late flights across months.
+ 
+# Question 4 
+Which day is best for minimizing average departure delays?
+```{r}
+by_day<- df %>% filter(CANCELLED==0,!is.na(DEP_DELAY))
+by_day<- by_day %>% group_by(DAY_OF_WEEK) %>% summarise(avg_dep_delay = mean(DEP_DELAY))
+by_day[which.min(by_day$avg_dep_delay),]
+```
+ Based on our data we can say that saturday is the best day for minimizing the average departure delays.
+ 
+# Question 5
+Which departure and arrival airport combination is associated with the worst median delay?
+```{r}
+by_arpt<- df%>% filter(CANCELLED==0,!is.na(ARR_DELAY))
+by_arpt<- by_arpt %>% group_by(ORIGIN_AIRPORT_ID,DEST_AIRPORT_ID) %>% summarise(delay = median(ARR_DELAY))
+by_arpt[which.max(by_arpt$delay),]
+```
+flights departing from Nashville, TN: Nashville International and arriving at Birmingham, AL: Birmingham-Shuttlesworth International would have the worst median delay of 399 minutes.
